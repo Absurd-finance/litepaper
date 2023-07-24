@@ -1,4 +1,4 @@
-**Absurd Finance: The credit card web3 needs**
+# Absurd Finance: The credit card web3 needs
 
 **Introduction**
 
