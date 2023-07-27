@@ -50,7 +50,7 @@ Beyond facilitating borrowing, Absurd Finance also nurtures peer-to-peer lending
 
 The protocol strives to achieve maximum decentralisation and fully takes advantage of DeFi legos to build a seamless user experience.
 
-### Lending
+### Lending
 An ERC4626 token Vault collects lenders' deposits issuing share tokens and gets instructed by the *Manager* to lend to new and existing credit lines. Once a borrower repays their due amount, the profits are distributed to the lenders over a few days to prevent value capture attacks.
 
 ### Borrowing
