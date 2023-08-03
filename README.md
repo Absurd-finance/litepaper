@@ -69,35 +69,81 @@ If such situation arises, a Kleros decentralised court is spun off and, in case 
 
 An interesting aspect of enforcement is the *social credit*, the reputation risk linked to a possible default. As the web3 ecosystem is moving towards an enclosed community, purposely failing to repay the loan could hinter or even sever relationships of the borrower with the rest of the ecosystem.
 
-## Capital Sourcing
-Apart from attracting liquidity from individual investors/LPs, Absurd can also source funds for credit lines through the issuance of zero-coupon bonds and collateralised loan obligations (CLOs). 
+### On-chain Shared Credit Bureau
 
-Zero-coupon bonds are debt securities that do not make periodic interest payments. Instead, they are issued at a discount to their face value, and upon maturity, the bondholder receives the face value of the bond. The discount rate implicitly defines the bond's yield. The present value (PV) of a zero-coupon bond can be calculated using the formula:
+In a bid to foster transparency and collaboration within the web3 financial ecosystem, Absurd Finance integrates an on-chain shared credit bureau. This decentralised repository aggregates credit data across various lenders, using smart contracts to ensure secure and permissioned access. Borrowers' credit scores, histories, and on-chain behaviours are stored on the blockchain, providing a unified view.
 
-$$
-PV = F / (1 + r)^n
-$$
+The shared credit information can be interpreted as:
 
-where $F$ is the face value of the bond, $r$ is the yield or discount rate, and $n$ is the number of periods until maturity. Issuing these bonds provides an upfront influx of liquidity to the Vault, to be repaid fully at the bond's maturity.
+$$B = \sum_{i=1}^n b_i$$
 
-Collateralised loan obligations (CLOs) are another tool for sourcing liquidity. A CLO is a type of structured credit product backed by a pool of loans. The Vault can bundle together a variety of credit lines and sell them as a CLO to investors. These CLOs are divided into tranches based on risk level and return. Investors who purchase riskier tranches receive higher interest rates, compensating them for the added risk. 
+where $B$ is the borrower's aggregated credit score, and $b_i$ represents the individual scores from different participating lenders. This aggregation allows lenders to gauge a borrower's full credit picture, thereby aiding in more informed lending decisions for all industry participants much alike Experian and TransUnion have done for traditional retail lending.
 
-The pricing of CLO tranches typically involves complex financial modeling. However, a simple approximation might involve the use of weighted average cost of capital (WACC) for the pool of loans, factoring in the likelihood of default for each loan and the recovery rate in the event of default. Cash flows are then discounted at this WACC to determine the present value of the tranche. For a tranche with expected cash flows $CF_t$ at each period $t$ and a WACC of $r$, its price $P$ can be estimated as:
+### Run-up Checks on Existing Borrowers
 
-$$
-P = \sum_{t=1}^{n} \frac{CF_t}{(1 + r)^t}
-$$
+To maintain the financial integrity of the system and mitigate the risks associated with over-borrowing, Absurd Finance implements a robust set of run-up checks on existing borrowers. These checks scrutinise the borrower's existing credit lines, repayment behaviours, and on-chain activities.
 
-Such financial instruments provide a powerful mechanism to raise significant amounts of liquidity while spreading the risk among various investors.
+The run-up checks can be represented as a probability function that integrates various signs of financial distress and models them as a Gaussian distribution. The function can consider different factors like balance utilisation $B$, late payments $L$, and other observable metrics $O$.
 
-## Extras
-As for all the credit cards, Absurd ones comes with a wide range of handpicked perks and rewards, from cashbacks to bonus points (ERC20 tokens) redeemable for prizes.
-All cards come with travel and medical insurance, fraud protection and are available everywhere Visa is accepted.
+The run-up check is represented mathematically as:
 
-## Regulatory Compliance
-To protect user privacy and streamline the onboarding process, Know Your Customer (KYC) and Anti-Money Laundering (AML) procedures utilise reusable zero-knowledge credentials. The credentials can be produced by trusted entities, e.g., traditional banks, and accepted by Absurd Finance. This ensures regulatory compliance while reducing friction during user onboarding.
+$$R = f(B, L, O)$$
 
-## Technical Specifications
+Here, $R$ is the probability distribution indicating the likelihood of financial distress, modelled as a Gaussian distribution:
+
+$$R \sim \mathcal{N}(\mu, \sigma^2)$$
+
+Or, to be specific
+
+$$R = \frac{1}{{\sqrt{2\pi\sigma^2}}} \exp\left( -\frac{{(B + L + O - \mu)^2}}{{2\sigma^2}} \right)$$
+
+Where:
+
+- $\mu$ is the mean, representing a central tendency of financial behaviour that could be computed based on historical data and statistical analysis.
+- $\sigma^2$ is the variance, capturing the spread or dispersion, showing how much the individual metrics (B, L, O) vary from the mean.
+
+*Interpretation*
+
+- If $R$ falls within a normal range (close to the mean), it indicates typical financial behaviour, and the borrower is considered in good standing.
+- If $R$ falls within the tails (especially the right tail, further from the mean), it indicates abnormal financial behaviour, possibly signifying financial distress or mismanagement. This could include signs such as consistent late payments, a sudden increase in outstanding credit, or erratic spending patterns. Such anomalies would prompt a more detailed investigation of the borrower's financial situation, and potentially lead to adjustments in the credit terms or even a suspension of the credit line to mitigate risk.
+
+These run-up checks are crucial to preventing potential default risks and ensuring that the lending decisions align with the borrower's current financial standing, thereby contributing to a secure and sustainable lending environment.
+
+A few examples:
+
+*1. Sudden Increase in Credit Card Utilisation*
+
+A substantial and sudden increase in credit card utilisation may signify financial trouble. A run-up check could be implemented to monitor the ratio of outstanding credit card balance to the credit limit:
+
+$$U = \frac{{\text{{Outstanding Balance}}}}{{\text{{Credit Limit}}}}$$
+
+If $U$ exceeds a predetermined threshold, it may trigger a review of the borrower's financial situation.
+
+*2. Frequent Minimum Payments*
+
+Continuously making only the minimum required payment on a credit card may be a sign of financial strain. By analysing the payment-to-balance ratio:
+
+$$P = \frac{{\text{{Minimum Payment Made}}}}{{\text{{Total Outstanding Balance}}}}$$
+
+if $P$ remains consistently low over a specified period, this could indicate that the borrower is struggling to manage their debts.
+
+*3. High Frequency of Cash Advances*
+
+Using a credit card for frequent cash advances might be an indication of a cash flow problem. A run-up check can track the number of cash advances over a specific time and compare it to a normalised pattern:
+
+$$C = \frac{{\text{{Number of Cash Advances}}}}{{\text{{Total Transactions}}}}$$
+
+A high value of $C$ could signal potential financial distress and warrant further investigation.
+
+*4. Multiple Late Payments*
+
+Late payments on a credit card can signal difficulties in managing finances. Monitoring the frequency of late payments as:
+
+$$L = \frac{{\text{{Number of Late Payments}}}}{{\text{{Total Due Payments}}}}$$
+
+An increasing trend $L$ may prompt the lender to engage with the borrower to assess their financial condition.
+
+These examples of run-up checks using card transactional data help in proactive identification of potential financial difficulties. By employing such real-time analytics, lenders can take pre-emptive actions, such as offering financial counselling or adjusting credit lines, to mitigate risks and assist borrowers before they reach a critical financial situation.
 
 ### Credit Scoring Oracle
 
@@ -120,6 +166,38 @@ $$C = f(S)$$
 where $f$ is a function that translates the score $S$ into a credit line value in EUR. If $S$ falls below a predetermined threshold, $C$ would be 0, indicating a rejection.
 
 This mathematical model of underwriting allows Absurd Finance to extend credit to a broad range of borrowers in the web3 environment with precision, thereby promoting financial inclusivity.
+
+### Capital Sourcing
+Apart from attracting liquidity from individual investors/LPs, Absurd can also source funds for credit lines through the issuance of zero-coupon bonds and collateralised loan obligations (CLOs). 
+
+Zero-coupon bonds are debt securities that do not make periodic interest payments. Instead, they are issued at a discount to their face value, and upon maturity, the bondholder receives the face value of the bond. The discount rate implicitly defines the bond's yield. The present value (PV) of a zero-coupon bond can be calculated using the formula:
+
+$$
+PV = F / (1 + r)^n
+$$
+
+where $F$ is the face value of the bond, $r$ is the yield or discount rate, and $n$ is the number of periods until maturity. Issuing these bonds provides an upfront influx of liquidity to the Vault, to be repaid fully at the bond's maturity.
+
+Collateralised loan obligations (CLOs) are another tool for sourcing liquidity. A CLO is a type of structured credit product backed by a pool of loans. The Vault can bundle together a variety of credit lines and sell them as a CLO to investors. These CLOs are divided into tranches based on risk level and return. Investors who purchase riskier tranches receive higher interest rates, compensating them for the added risk. 
+
+The pricing of CLO tranches typically involves complex financial modeling. However, a simple approximation might involve the use of weighted average cost of capital (WACC) for the pool of loans, factoring in the likelihood of default for each loan and the recovery rate in the event of default. Cash flows are then discounted at this WACC to determine the present value of the tranche. For a tranche with expected cash flows $CF_t$ at each period $t$ and a WACC of $r$, its price $P$ can be estimated as:
+
+$$
+P = \sum_{t=1}^{n} \frac{CF_t}{(1 + r)^t}
+$$
+
+Such financial instruments provide a powerful mechanism to raise significant amounts of liquidity while spreading the risk among various investors.
+
+## Extras
+
+### Perks
+As for all the credit cards, Absurd ones comes with a wide range of handpicked perks and rewards, from cashbacks to bonus points (ERC20 tokens) redeemable for prizes.
+All cards come with travel and medical insurance, fraud protection and are available everywhere Visa is accepted.
+
+### Regulatory Compliance
+To protect user privacy and streamline the onboarding process, Know Your Customer (KYC) and Anti-Money Laundering (AML) procedures utilise reusable zero-knowledge credentials. The credentials can be produced by trusted entities, e.g., traditional banks, and accepted by Absurd Finance. This ensures regulatory compliance while reducing friction during user onboarding.
+
+## Technical Specifications
 
 ### Vault
 
@@ -180,7 +258,7 @@ Note that locked losses are not included in this calculation, as this would perm
 
 One significant caveat is that *the entirety of the free liquidity cannot be borrowed or withdrawn at once*. Indeed, this could cause the Vault to become *unhealthy* as per the ERC4626 standard. Therefore, the functions that move funds include a check to revert if all free liquidity is taken. 
 
-## Borrow
+#### Borrow
 
 The Vault's `borrow` function, which can only be accessed by the owner, directly transfers the `amount` of the native asset from the Vault to a `receiver`. To account for the loan, the `netLoans` state variable is incremented by the `amount`.
 
